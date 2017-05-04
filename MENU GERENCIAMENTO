@@ -1,0 +1,47 @@
+#!/bin/bash
+
+USER="Lucas"
+PASS="132"
+
+MENU(){
+OPCAO=$(dialog					        \
+	--stdout			  	            \
+	--title "MENU"				        \
+	--menu "Escolha uma opção"		\
+	0 0 0					                \
+	1 "Gerenciar Arquivos"			  \
+	2 "Gerenciar Usuario"			    \
+	3 "Gerenciar Rede"			      \
+	4 "Gerenciar Dispositivo"		  \
+	5 "Gerenciar Repositorio"		  \
+	6 "Sair")
+
+	case $OPCAO in
+
+		1) GARQ ;;
+		2) GUSR ;;
+		3) GRED ;;
+		4) GDIS ;;
+		5) GREP ;;
+		6) FIM ;;
+		*) dialog --title "Opção Invalida" --msgbox "Digite Novamente" 0 0 ; MENU ;;
+	esac
+}
+function FIM(){
+	dialog --title "FIM" --msgbox "Ate breve" 0 0
+	clear
+	exit 0
+}
+clear
+USUARIO=$(dialog					            \
+		--stdout				                  \
+		--title "Login"				            \
+		--inputbox "Digite seu usuario"		\
+		0 0)
+SENHA=$(dialog						            \
+		--stdout				                  \
+		--title "Senha"				            \
+		--passwordbox "Digite sua senha"	\
+		0 0)
+
+[ $USUARIO == $USER ] && [ $SENHA == $PASS ] && MENU || FIM
