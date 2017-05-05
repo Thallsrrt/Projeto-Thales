@@ -2,20 +2,37 @@
 
 TEMP=1
 
-GARQ(){
-OPCAO=$(dialog					        \
-	--stdout				              \
-	--title "MENU"				        \
+MENU(){
+OPCAO=$(dialog					\
+	--stdout				\
+	--title "MENU"				\
 	--menu "Escolha uma opção"		\
-	0 0 0					                \ 
-	1 "Criar Arquivo"			        \
-	2 "Apagar Arquivo"			      \
-	3 "Criar Diretorio"			      \
-	4 "Apagar Diretorio"			    \
-	5 "Mover Arquivo/Diretorio"		\
+	0 0 0					\
+	1 "Gerenciar Arquivos"			\
+	2 "Sair")				
+
+	case $OPCAO in
+
+		1) GARQ ;;
+		2) FIM ;;
+		*) dialog --title "Opção Invalida" --msgbox "Digite Novamente" 0 0 ; MENU ;;
+	esac
+}
+
+GARQ(){
+OPCAO=$(dialog				\
+	--stdout			\
+	--title "MENU"			\
+	--menu "Escolha uma opção"	\
+	0 0 0				\ 
+	1 "Criar Arquivo"		\
+	2 "Apagar Arquivo"		\
+	3 "Criar Diretorio"		\
+	4 "Apagar Diretorio"		\
+	5 "Mover Arquivo/Diretorio"	\
 	6 "Copiar Arquivo/Diretorio"	\
 	7 "Listar Arquivo/Diretorio"	\
-	8 "Permicionamento"			      \
+	8 "Permicionamento"		\
 	9 "Sair")
 
 	case $OPCAO in
@@ -32,29 +49,10 @@ OPCAO=$(dialog					        \
 		*) dialog --title "Opção Invalida" --msgbox "Digite Novamente" 0 0 ; MENU ;;
 	esac
 }
-MENU(){
-OPCAO=$(dialog					\
-	--stdout				\
-	--title "MENU"				\
-	--menu "Escolha uma opção"		\
-	0 0 0					\
-	1 "Gerenciar Arquivos"			\
-	2 "Gerenciar Usuario"			\
-	3 "Gerenciar Rede"			\
-	4 "Gerenciar Dispositivo"		\
-	5 "Gerenciar Repositorio"		\
-	6 "Sair")				\
-
-	case $OPCAO in
-
-		1) GARQ ;;
-		2) GUSR ;;
-		3) GRED ;;
-		4) GDIS ;;
-		5) GREP ;;
-		6) FIM ;;
-		*) dialog --title "Opção Invalida" --msgbox "Digite Novamente" 0 0 ; MENU ;;
-	esac
+FIM(){
+dialog --title 'FIM' --msgbox 'Até a Próxima' 0 0
+clear
+exit 0
 }
 function CARQ(){
 NOME=$( dialog --stdout --title "Nome" --inputbox "Digite nome do arquivo" 0 0 )
@@ -106,6 +104,6 @@ dialog --title "Informação" --msgbox "" 0 0
 GARQ
 }
 while [[ $TEMP != 0 ]]; do
-	MENU
+	MENU || FIM
 done
 
