@@ -434,7 +434,7 @@ OPCAO=$(dialog				              \
 	esac
 }
 function LRES(){
-ifconfig > /tmp/lsredes.txt
+ip addr > /tmp/lsredes.txt
 dialog --textbox /tmp/lsredes.txt 0 0
 GRES
 }
@@ -444,24 +444,42 @@ ifconfig $NOME > /tmp/lisconf.txt
 dialog --textbox /tmp/lisconf.txt 0 0
 GRES
 }
-function CRMA(){
+function ARED(){
 INT=$(dialog --stdout --inputbox 'Coloque a interfade da rede (Ex.: eth0, eth1)' 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 echo "########################################################################" >> /etc/network/interfaces
 echo "auto $INT" >> /etc/network/interfaces
 echo "allow-hotplug $INT" >> /etc/network/interfaces
 echo "iface $INT inet static" >> /etc/network/interfaces
 IP=$(dialog --stdout --inputbox "Coloque o IP da rede:" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 echo "address $IP" >> /etc/network/interfaces
 NETM=$(dialog --stdout --inputbox "Coloque o Netmask da rede:" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 echo "netmask $NETM" >> /etc/network/interfaces
 NETW=$(dialog --stdout --inputbox "Coloque o Network da rede:" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 echo "network $NETW" >> /etc/network/interfaces
 BROA=$(dialog --stdout --inputbox "Coloque o Broadcast da rede:" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 echo "broadcast $BROA" >> /etc/network/interfaces
 echo "########################################################################" >> /etc/network/interfaces
 dialog --tilte 'Informação' --msgbox 'Nova rede feita com sucesso' 0 0
+if [[ $? == '1' ]]; then
+	GRES
+fi
 dialog --title 'Informação' --yesno 'Deseja ver as alterações feitas?' 0 0
-if [ $? == 0 ]; then
+if [[ $? == 0 ]]; then
 	dialog --title 'Informação' --textbox /etc/network/interfaces 0 0
 	GRES
 else
@@ -470,8 +488,11 @@ fi
 }
 function DPRE(){
 NOME=$(dialog --stdout --title "Nome" --inputbox "Desativar rede" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
 ifconfig eth0 down
-if [[ $? == '0' ]];then 
+if [[ $? == '0' ]]; then
 	dialog --title "Informação" --msgbox "Rede desativada com sucesso" 0 0
 else
 	dialog --title "Informação" --msgbox "Erro, Tente novamente" 0 0
@@ -481,21 +502,29 @@ GRES
 }
 function APRE(){
 NOME=$(dialog --stdout --title "Nome" --inputbox "Ativar rede" 0 0)
-ifconfig eth0 up
-if [[ $? == '0' ]];then 
-	dialog --title "Informação" --msgbox "Rede desativada com sucesso" 0 0
+if [[ $? == '1' ]]; then
+	GRES
+fi
+ifconfig $NOME up
+if [[ $? == '0' ]]; then
+	dialog --title "Informação" --msgbox "Rede ativada com sucesso" 0 0
 else
 	dialog --title "Informação" --msgbox "Erro, Tente novamente" 0 0
 	APRE
 fi
 }
-}
 function MMAC(){
 NOME=$(dialog --stdout --title "Nome" --inputbox "Digite o nome da rede " 0 0)
-MAC=$(dialog --stdout --title "Nome" --inputbox "Digite o novo MAC" 0 0
-if config $NOME hw ether $MAC
-if [[ $? == '0' ]];then 
-	dialog --title "Informação" --msgbox "Rede desativada com sucesso" 0 0
+if [[ $? == '1' ]]; then
+	GRES
+fi
+MAC=$(dialog --stdout --title "Nome" --inputbox "Digite o novo MAC" 0 0)
+if [[ $? == '1' ]]; then
+	GRES
+fi
+ifconfig $NOME hw ether $MAC
+if [[ $? == '0' ]]; then
+	dialog --title "Informação" --msgbox "MAC alterado com sucesso" 0 0
 else
 	dialog --title "Informação" --msgbox "Erro, Tente novamente" 0 0
 	MMAC
@@ -507,10 +536,7 @@ function RSIS(){
 dialog --title "Informação" --msgbox "Sistema reiniciado com sucesso" 0 0
 GRES
 }
-function ARED(){
-GRES
-}
-function GRES(){
+GRES(){
 OPCAO=$(dialog					      \
 	--stdout				      \
 	--title "MENU"				      \
@@ -521,23 +547,20 @@ OPCAO=$(dialog					      \
 	3 "Configurar rede manualmente"		      \
 	4 "Desativar placa de rede"		      \
 	5 "Ativar placa de rede"		      \
-	6 "Visualizar redes fisicas "		      \
-	7 "Mudar MAC"				      \
-	8 "Reiniciar Sistema"			      \
-	9 "Adicionar nova rede" 		      \
-	10 "Voltar")
-	
+	6 "Mudar MAC"				      \
+	7 "Reiniciar Sistema"			      \
+	8 "Adicionar nova rede" 		      \
+	9 "Voltar")
 	case $OPCAO in
 		1) LRES ;;
 		2) LRPEC ;;
 		3) CRMA ;;
 		4) DPRE ;;
 		5) APRE ;;
-		6) VRFI ;;
-		7) MMAC ;;
-		8) RSIS ;;
-		9) ARED ;;
-	 	10) MENU ;;
+		6) MMAC ;;
+		7) RSIS ;;
+		8) ARED ;;
+	 	9) MENU ;;
 		*) dialog --title "Opção Invalida" --msgbox "Digite Novamente" 0 0 ; MENU ;;
 	esac
 }
